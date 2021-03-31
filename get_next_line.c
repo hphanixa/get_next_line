@@ -1,17 +1,23 @@
 #include "get_next_line.h"
 
-char		*ft_strdup(char *s1)
+char		*ft_line(char *s1)
 {
 	size_t	i;
 	char	*dest;
+	int	search;
 
+	search = ft_countbeforen(s1);
 	i = 0;
-	if (!(dest = malloc(sizeof(char) * (ft_strlen(s1) + 1))))
+	dest = malloc(sizeof(char) * search + 1);
+	if (!dest)
 		return (NULL);
-	while (s1[i] && s1[i] != '\n')
+	if (s1)
 	{
-		dest[i] = s1[i];
-		i++;
+		while (s1[i] && s1[i] != '\n')
+		{
+			dest[i] = s1[i];
+			i++;
+		}
 	}
 	dest[i] = '\0';
 	return (dest);
@@ -33,53 +39,54 @@ int			is_return(char *str)
 	return (0);
 }
 
-char		*ft_strchr_and_cpy(char *s, int c)
+char		*ft_stock(char *s)
 {
-	char	*str;
 	int		i;
-	int		j;
+	int		search;
 
-	i = 0;
 	if (!s)
+		return (0);
+	search = ft_countbeforen(s);
+	if (!s[search])
 	{
 		free(s);
 		return (0);
 	}
-	while (s[i] && s[i] != c)
+	if (s && s[search])
+		search++;
+	i = 0;
+	while (s && s[search])
+	{
+		s[i] = s[search];
 		i++;
-	if (!(str = malloc(sizeof(char) * ((ft_strlen(s) - i) + 1))))
-		return (NULL);
-	if (s[i])
-		i++;
-	j = 0;
-	while (s[i])
-		str[j++] = s[i++];
-	free(s);
-	str[j] = '\0';
-	return (str);
+		search++;
+	}
+	s[i] = '\0';
+	return (s);
 }
 
 int			get_next_line(int fd, char **line)
 {
-	char		*buff;
-	static char	*save[2000];
+	char		buff[BUFFER_SIZE + 1];
+	char		*temp;
+	static char	*save[1024];
 	int			reader;
 
 	reader = 1;
-	if (fd < 0 || !line || BUFFER_SIZE < 1)
+	if (fd < 0 || !line || BUFFER_SIZE <= 0)
 		return (-1);
-	if (!(buff = malloc(sizeof(char) * (BUFFER_SIZE + 1))))
-		return (-1);
-	while (!is_return(save[fd]) && reader != 0)
+	while ((!is_return(save[fd]))
+		&& ((reader = read(fd, buff, BUFFER_SIZE)) != 0))
 	{
-		if ((reader = read(fd, buff, BUFFER_SIZE)) == -1)
+		if (reader == -1)
 			return (-1);
 		buff[reader] = '\0';
-		save[fd] = ft_strjoin(save[fd], buff);
+		temp = save[fd];
+		save[fd] = ft_join(save[fd], buff);
+		free(temp);
 	}
-	free(buff);
-	*line = ft_strdup(save[fd]);
-	save[fd] = ft_strchr_and_cpy(save[fd], '\n');
+	*line = ft_line(save[fd]);
+	save[fd] = ft_stock(save[fd]);
 	if (reader == 0)
 		return (0);
 	return (1);
