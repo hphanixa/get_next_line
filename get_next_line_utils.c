@@ -12,7 +12,7 @@ int		ft_strlen(const char *s)
 	return (i);
 }
 
-int		ft_countbeforen(char *str)
+int		ft_countbeforen(const char *str)
 {
 	int i;
 
@@ -33,7 +33,7 @@ char	*ft_join(char const *s1, char const *s2)
 	i = 0;
 	j = 0;
 	str = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2)) + 1);
-	if (!str)
+	if (str == NULL)
 		return (NULL);
 	while (s1 && s1[i])
 	{
