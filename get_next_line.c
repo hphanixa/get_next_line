@@ -1,6 +1,6 @@
 #include "get_next_line.h"
 
-char		*ft_line(char *s1)
+char		*ft_line(const char *s1)
 {
 	size_t	i;
 	char	*dest;
@@ -9,9 +9,9 @@ char		*ft_line(char *s1)
 	search = ft_countbeforen(s1);
 	i = 0;
 	dest = malloc(sizeof(char) * search + 1);
-	if (!dest)
+	if (dest == NULL)
 		return (NULL);
-	if (s1)
+	if (s1 != 0)
 	{
 		while (s1[i] && s1[i] != '\n')
 		{
@@ -23,12 +23,12 @@ char		*ft_line(char *s1)
 	return (dest);
 }
 
-int			is_return(char *str)
+int			is_eol(const char *str)
 {
 	int i;
 
 	i = 0;
-	if (!str)
+	if (str == 0)
 		return (0);
 	while (str[i])
 	{
@@ -44,7 +44,7 @@ char		*ft_stock(char *s)
 	int		i;
 	int		search;
 
-	if (!s)
+	if (s == 0)
 		return (0);
 	search = ft_countbeforen(s);
 	if (!s[search])
@@ -75,14 +75,14 @@ int			get_next_line(int fd, char **line)
 	reader = 1;
 	if (fd < 0 || !line || BUFFER_SIZE <= 0)
 		return (-1);
-	while ((!is_return(save[fd]))
+	while ((!is_eol(save[fd]))
 		&& ((reader = read(fd, buff, BUFFER_SIZE)) != 0))
 	{
 		if (reader == -1)
 			return (-1);
 		buff[reader] = '\0';
 		temp = save[fd];
-		save[fd] = ft_join(save[fd], buff);
+		save[fd] = ft_join(temp, buff);
 		free(temp);
 	}
 	*line = ft_line(save[fd]);
