@@ -6,9 +6,7 @@
 # include <unistd.h>
 # include <fcntl.h>
 
-# ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 2
-# endif
 
 int		get_next_line(int const fd, char **line);
 int		ft_strlen(const char *s);
